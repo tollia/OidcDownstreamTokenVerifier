@@ -1,0 +1,12 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+}
+
+<form action="/login" method="post">
+    <label for="jwt">JWT</label/>
+    <input type="text" id="jwt" name="jwt" />
+    <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl"/>
+    <input type="submit" value="Login"/>
+</form>
+
