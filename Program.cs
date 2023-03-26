@@ -81,26 +81,30 @@ builder.Services
                 return Task.CompletedTask;
             },
             OnTokenValidated = context => {
-                // Log information about the validated token
+                // Log information about the validated token. Remove or log with appropriate level in production.
                 var token = context.SecurityToken as JwtSecurityToken;
                 Debug.WriteLine($"Token validated: {token}");
+
+                // Call context.Fail("Some description of failure"); to manually fail the authentication
+                // This comes in handy for implementation of custom Lifetime checking.
 
                 return Task.CompletedTask;
             },
             OnMessageReceived = context => {
-                // Log information about the received token
+                // Log information about the received token. Remove or log with appropriate level in production.
                 string authorizationHeader = context.Request.Headers["Authorization"];
                 Debug.WriteLine($"Token received: {authorizationHeader}");
 
                 return Task.CompletedTask;
             },
             OnChallenge = context => {
-                // Log information about the challenge
+                // Log information about the challenge.  Remove or log with appropriate level in production.
                 Debug.WriteLine($"Challenge: {context.Error}, {context.ErrorDescription}");
 
                 return Task.CompletedTask;
             },
             OnForbidden = context => {
+                // Remove or log with appropriate level in production.
                 return Task.CompletedTask;
             },
             
