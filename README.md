@@ -43,4 +43,4 @@ There is no meaningful contract available for when or under what circumstance to
 manual restart is just as good a plan as any else.
 
 ### Questions
-If you have questions email tolli@kopavogur.isor use the same handle on Teams.
+If you have questions email tolli@kopavogur.is or use the same handle on Teams.
