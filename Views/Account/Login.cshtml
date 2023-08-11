@@ -3,10 +3,11 @@
     ViewData["Title"] = "Login";
 }
 
-<form action="/login" method="post">
+<form action="LoginJwt" method="post">
     <label for="jwt">JWT</label/>
     <input type="text" id="jwt" name="jwt" />
-    <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl"/>
+    <label for="returnUrl">Return URL</label/>
+    <input type="text" id="returnUrl" name="returnUrl" value="@ViewBag.returnUrl"/>
     <input type="submit" value="Login"/>
 </form>
 

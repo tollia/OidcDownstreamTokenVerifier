@@ -1,13 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace OidcDownstreamTokenVerifier.Controllers {
+namespace OidcDownstreamTokenVerifier.Controllers
+{
+    [EnableCors("AllowAll")]
+    [AllowAnonymous]
     public class AccountController : Controller {
         private TokenValidationParameters TokenValidationParameters { get; }
 
@@ -33,8 +37,9 @@ namespace OidcDownstreamTokenVerifier.Controllers {
         }
 
         // Perform a CookieScheme login with the Authrization Bearer JWT token present in header.
-        [HttpPost("/loginJwtBearer")]
         public async Task<IActionResult> LoginJwtBearer(string returnUrl = "/") {
+            bool success = Request.Headers.TryGetValue("Authorization", out var authorizationHeaderValue);
+
             var authResult = HttpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme).Result;
             string? idToken = authResult.Succeeded ? authResult.Properties.GetTokenValue("id_token") : null;
             ClaimsPrincipal? principal = authResult.Principal;
@@ -43,17 +48,19 @@ namespace OidcDownstreamTokenVerifier.Controllers {
             await HandleCookieLogin(principal);
 
             // Redirect the user to the returnUrl
-            return Redirect(returnUrl);
+            return Ok(returnUrl);
         }
 
         // Perform a CookieScheme login with the JWT token present from parameter passed.
-        [HttpPost("/login")]
-        public async Task<IActionResult> Login(string jwt, string returnUrl = "/") {
-            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-            JwtSecurityToken token = handler.ReadJwtToken(jwt);
+        public async Task<IActionResult> LoginJwt(string jwt, string returnUrl = "/") {
+            if (string.IsNullOrEmpty(jwt)) return new UnauthorizedResult();
 
             // Validate the JWT token
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            JwtSecurityToken token = handler.ReadJwtToken(jwt);
             ClaimsPrincipal principal = handler.ValidateToken(jwt, TokenValidationParameters, out var _);
+
+            if (principal == null) return new UnauthorizedResult();
 
             await HandleCookieLogin(principal);
 
