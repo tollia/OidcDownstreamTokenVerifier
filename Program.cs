@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -46,6 +47,41 @@ TokenValidationParameters tokenValidationParameters = new TokenValidationParamet
         return signingKeys;
     }
 };
+
+
+//private MemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
+
+//TokenValidationParameters tokenValidationParameters = new TokenValidationParameters
+//{
+//    //... (other parameters)
+
+//    IssuerSigningKeyResolver = (token, securityToken, kid, validationParameters) =>
+//    {
+//        List<SecurityKey> signingKeys = new List<SecurityKey>();
+
+//        // Check if the kid exists in the cache
+//        if (!_cache.TryGetValue(kid, out signingKeys))
+//        {
+//            // If not, fetch the OIDC configuration
+//            ConfigurationManager<OpenIdConnectConfiguration> configurationManager = new(
+//                oidcWellKnownConfigurationURI,
+//                new OpenIdConnectConfigurationRetriever(),
+//                new HttpDocumentRetriever()
+//            );
+
+//            OpenIdConnectConfiguration? oidcConfiguration = configurationManager.GetConfigurationAsync(CancellationToken.None).Result;
+
+//            signingKeys = oidcConfiguration.SigningKeys
+//                .Where(key => key.KeyId == kid)
+//                .ToList();
+
+//            // Cache the found signingKeys with the respective kid
+//            _cache.Set(kid, signingKeys, TimeSpan.FromHours(1));  // cache for 1 hour, adjust as needed
+//        }
+
+//        return signingKeys;
+//    }
+//};
 
 var builder = WebApplication.CreateBuilder(args);
 
